@@ -6,19 +6,28 @@ pygame.init()
 
 WIDTH, HEIGHT = 1000, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Play Again Example")
+pygame.display.set_caption("Dice Game")
 
 BLACK = (0, 0, 0)
 FELT_GREEN = (34, 139, 34)
 font = pygame.font.SysFont(None, 60)
 
 button_text = font.render("Play Again", True, FELT_GREEN)
-button_rect = button_text.get_rect(center=(WIDTH // 2, HEIGHT // 2))
+button_rect = button_text.get_rect(center=(WIDTH // 2, HEIGHT - 100))
 button_color = BLACK
 button_hover_color = BLACK
 
+dice_images = [
+    pygame.transform.scale(pygame.image.load(f'dice{i}.png'), (80, 80))
+    for i in range(1, 7)
+]
+
+# Dice rolls
+player_dice = []
+dealer_dice = []
+
 def reset_game():
-    screen.fill(FELT_GREEN)
+    screen.fill(BLACK)
     pygame.display.update()
 
 def draw_button(mouse_pos):
@@ -27,40 +36,53 @@ def draw_button(mouse_pos):
     screen.blit(button_text, button_rect)
 
 def roll_dice():
-    num1 = random.randint(1, 6)
-    num2 = random.randint(1, 6)
-    num3 = random.randint(1, 6)
-    num4 = random.randint(1, 6)
-    num5 = random.randint(1, 6)
-    num6 = random.randint(1, 6)
+    global player_dice, dealer_dice
+    player_dice = [random.randint(1, 6) for _ in range(6)]
+    dealer_dice = [random.randint(1, 6) for _ in range(6)]
 
-    Dnum1 = random.randint(1, 6)
-    Dnum2 = random.randint(1, 6)
-    Dnum3 = random.randint(1, 6)
-    Dnum4 = random.randint(1, 6)
-    Dnum5 = random.randint(1, 6)
-    Dnum6 = random.randint(1, 6)
+    player_total = sum(player_dice)
+    dealer_total = sum(dealer_dice)
 
-    combined_num = num1 + num2 + num3 + num4 + num5 + num6
-    dealer_combined = Dnum1 + Dnum2 + Dnum3 + Dnum4 + Dnum5 + Dnum6
+    print(f"You rolled {player_dice}")
+    print(f"The dealer rolled {dealer_dice}")
+    print(f"Your total combined number is {player_total}")
+    print(f"The dealer's total combined number is {dealer_total}")
 
-    print(f"You rolled [{num1} {num2} {num3} {num4} {num5} {num6}]")
-    print(f"\nThe dealer rolled [{Dnum1} {Dnum2} {Dnum3} {Dnum4} {Dnum5} {Dnum6}]")
-    print(f"\nYour total combined number is {combined_num}")
-    print(f"The dealer's total combined number is {dealer_combined}")
-
-    if combined_num > dealer_combined:
+    if player_total > dealer_total:
         print("Congratulations! You've won!!!")
-    elif combined_num < dealer_combined:
+    elif player_total < dealer_total:
         print("You've lost!")
     else:
         print("It's a tie!")
+
+def draw_dice():
+    dealer_label = font.render("DEALER", True, FELT_GREEN)
+    player_label = font.render("PLAYER", True, FELT_GREEN)
+
+    screen.blit(dealer_label, (WIDTH // 2 - dealer_label.get_width() // 2, 50))
+    screen.blit(player_label, (WIDTH // 2 - player_label.get_width() // 2, 370))
+
+    total_row_width = 6 * 80 + 5 * 40  # 680px
+    start_x = (WIDTH - total_row_width) // 2
+
+    #dealer dice
+    for i in range(6):
+        x = start_x + i * (80 + 40)
+        screen.blit(dice_images[dealer_dice[i] - 1], (x, 120))
+    #player dice
+    for i in range(6):
+        x = start_x + i * (80 + 40)
+        screen.blit(dice_images[player_dice[i] - 1], (x, 440))
 
 def main():
     running = True
     while running:
         reset_game()
         roll_dice()
+        screen.fill(BLACK)
+        draw_dice()
+        pygame.display.update()
+
         game_running = True
         while game_running:
             mouse_pos = pygame.mouse.get_pos()
@@ -70,16 +92,13 @@ def main():
                 if event.type == pygame.QUIT:
                     running = False
                     game_running = False
-
                 elif event.type == pygame.MOUSEBUTTONDOWN:
                     if button_rect.collidepoint(event.pos):
-
                         print("\nGame Resetting...\n")
                         game_running = False
                         pygame.time.wait(1000)
 
             pygame.display.update()
-
 
         print("\nGame Over! Click Play Again to restart.")
 
