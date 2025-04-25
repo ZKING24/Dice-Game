@@ -3,6 +3,13 @@ import pygame
 import sys
 
 pygame.init()
+pygame.mixer.init()
+
+#music
+dice_roll_sound = pygame.mixer.Sound('dice_roll.mp3')
+pygame.mixer.music.load("elevator_music.mp3)
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1)
 
 WIDTH, HEIGHT = 1000, 800
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -36,6 +43,8 @@ def draw_button(mouse_pos):
     screen.blit(button_text, button_rect)
 
 def roll_dice():
+    dice_roll_sound.play()
+    
     global player_dice, dealer_dice
     player_dice = [random.randint(1, 6) for _ in range(6)]
     dealer_dice = [random.randint(1, 6) for _ in range(6)]
