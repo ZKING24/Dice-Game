@@ -7,7 +7,7 @@ pygame.mixer.init()
 
 #music
 dice_roll_sound = pygame.mixer.Sound('dice_roll.mp3')
-pygame.mixer.music.load("elevator_music.mp3)
+pygame.mixer.music.load("elevator_music.mp3")
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play(-1)
 
